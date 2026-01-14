@@ -25,10 +25,10 @@ class GaussianModel:
 
     def setup_functions(self): #用于设置一些激活函数和变换函数
         def build_covariance_from_scaling_rotation(scaling, scaling_modifier, rotation):#构建协方差矩阵，该函数接受 scaling（尺度）、scaling_modifier（尺度修正因子）、rotation（旋转）作为参数
-            L = build_scaling_rotation(scaling_modifier * scaling, rotation)
-            actual_covariance = L @ L.transpose(1, 2)
-            symm = strip_symmetric(actual_covariance)
-            return symm #最终返回对称的协方差矩阵。
+            L = build_scaling_rotation(scaling_modifier * scaling, rotation) # 构造协方差矩阵中一半，即R @ S
+            actual_covariance = L @ L.transpose(1, 2) # 实际协方差矩阵，即 L @ L^T
+            symm = strip_symmetric(actual_covariance) # 因为协方差矩阵是对称的，从[N, 3, 3]协方差矩阵只取一半（上三角），变为[N, 6]
+            return symm #最终返回对称协方差矩阵的上三角部分。
         
         self.scaling_activation = torch.exp #将尺度激活函数设置为指数函数。
         self.scaling_inverse_activation = torch.log #将尺度逆激活函数设置为对数函数。
@@ -120,7 +120,8 @@ class GaussianModel:
     @property
     def get_opacity(self):
         return self.opacity_activation(self._opacity)
-    
+
+    # 返回对称协方差矩阵的上三角部分
     def get_covariance(self, scaling_modifier = 1):
         return self.covariance_activation(self.get_scaling, scaling_modifier, self._rotation)
 
