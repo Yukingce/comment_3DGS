@@ -107,3 +107,8 @@ def render(viewpoint_camera, pc : GaussianModel, pipe, bg_color : torch.Tensor, 
             "viewspace_points": screenspace_points,
             "visibility_filter" : radii > 0,
             "radii": radii}
+
+"""
+3DGS 将每一个三维高斯球投影到二维图像平面上，形成一个二维的椭圆。由于椭圆的形状和大小由 二维协方差矩阵 决定，
+为了方便光栅化（Rasterization）过程中的计算和筛选，程序会计算出一个能够完全包裹住这个二维椭圆的最小圆半径，这就是 radii。
+"""

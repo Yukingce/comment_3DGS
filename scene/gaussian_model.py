@@ -405,7 +405,6 @@ class GaussianModel:
                                               torch.max(self.get_scaling, dim=1).values <= self.percent_dense*scene_extent)
         # 在上述掩码的基础上，进一步过滤掉那些缩放（scaling）大于一定百分比（self.percent_dense）的场景范围（scene_extent）的点。这样可以确保新添加的点不会太远离原始数据。
         # 滤掉过大的高斯点
-
         # 选择位置梯度大于阈值，且不那么大的高斯点，进行克隆
         # 根据掩码选取符合条件的点的其他特征，如颜色、透明度、缩放和旋转等。
         new_xyz = self._xyz[selected_pts_mask]
